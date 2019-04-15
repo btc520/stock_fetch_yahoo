@@ -1,10 +1,10 @@
 from yahoo_historical import Fetcher
 import datetime
 
-stock = raw_input("input stock symbol:")
+#stock = raw_input("input stock symbol:")
 #AAPL
 
-
+holdings = ["BLV", "DBC", "GLD"]
 
 now = datetime.datetime.now()
 
@@ -14,8 +14,8 @@ print("from: %s, today: %s" % (three_year_ago, now_year) )
 
 
 
-def today_open():
-	data_today = Fetcher(stock, now_year)
+def today_open(loop_holdings_today):
+	data_today = Fetcher(loop_holdings_today, now_year)
 	df_today = data_today.getHistorical()
 	x = 0
 	for index, row in df_today.iterrows():
@@ -24,8 +24,8 @@ def today_open():
 			
 	return(x)
 	
-def Y3_range():
-	data_3ylow = Fetcher(stock, three_year_ago, now_year)
+def Y3_range(loop_holdings_range):
+	data_3ylow = Fetcher(loop_holdings_range, three_year_ago, now_year)
 	df_3y_range = data_3ylow.getHistorical()
 
 	year3_low = 100000
@@ -54,12 +54,15 @@ def Y3_range():
 			
 	return(year3_low, year3_high)
 	
+for symbol in holdings: 
+	price_today = today_open(symbol)
+	price_range = Y3_range(symbol)
+	
+	threeY_range = round((price_today-price_range[0]) / (price_range[1]-price_range[0]) * 100,2)
 
-price_today = today_open()
-price_range = Y3_range()
-threeY_range = round((price_today-price_range[0]) / (price_range[1]-price_range[0]) * 100,2)
-
-print ("today price: %s, three year lowest price %s, highest price %s" % (price_today, price_range[0], price_range[1]) )
-print("three year range: %s%%" % threeY_range)
+	print ("###")
+	print ("%s today price: %s, three year lowest price %s, highest price %s" % (symbol, price_today, price_range[0], price_range[1]) )
+	print("three year range: %s%%" % threeY_range)
+	print("###")
 
 	
